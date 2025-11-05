@@ -32,15 +32,20 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import io.flutter.embedding.engine.loader.FlutterInjector;
+import io.flutter.embedding.engine.loader.FlutterLoader;
 
 /** Conversions between JSON-like values and GoogleMaps data types. */
 class Convert {
 
   // TODO(hamdikahloun): FlutterMain has been deprecated and should be replaced with FlutterLoader
   //  when it's available in Stable channel: https://github.com/flutter/flutter/issues/70923.
+
   @SuppressWarnings("deprecation")
   private static BitmapDescriptor toBitmapDescriptor(Object o) {
     final List<?> data = toList(o);
+    FlutterLoader loader = FlutterInjector.instance().flutterLoader();
+
     switch (toString(data.get(0))) {
       case "defaultMarker":
         if (data.size() == 1) {
@@ -48,25 +53,30 @@ class Convert {
         } else {
           return BitmapDescriptorFactory.defaultMarker(toFloat(data.get(1)));
         }
+
       case "fromAsset":
         if (data.size() == 2) {
           return BitmapDescriptorFactory.fromAsset(
-              io.flutter.view.FlutterMain.getLookupKeyForAsset(toString(data.get(1))));
+                  loader.getLookupKeyForAsset(toString(data.get(1))));
         } else {
           return BitmapDescriptorFactory.fromAsset(
-              io.flutter.view.FlutterMain.getLookupKeyForAsset(
-                  toString(data.get(1)), toString(data.get(2))));
+                  loader.getLookupKeyForAsset(
+                          toString(data.get(1)),
+                          toString(data.get(2))));
         }
+
       case "fromAssetImage":
         if (data.size() == 3) {
           return BitmapDescriptorFactory.fromAsset(
-              io.flutter.view.FlutterMain.getLookupKeyForAsset(toString(data.get(1))));
+                  loader.getLookupKeyForAsset(toString(data.get(1))));
         } else {
           throw new IllegalArgumentException(
-              "'fromAssetImage' Expected exactly 3 arguments, got: " + data.size());
+                  "'fromAssetImage' Expected exactly 3 arguments, got: " + data.size());
         }
+
       case "fromBytes":
         return getBitmapFromBytes(data);
+
       default:
         throw new IllegalArgumentException("Cannot interpret " + o + " as BitmapDescriptor");
     }
