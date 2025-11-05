@@ -32,8 +32,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import io.flutter.embedding.engine.loader.FlutterInjector;
+import io.flutter.embedding.engine.FlutterEngine;
 import io.flutter.embedding.engine.loader.FlutterLoader;
+import io.flutter.embedding.engine.plugins.FlutterPlugin;
 
 /** Conversions between JSON-like values and GoogleMaps data types. */
 class Convert {
@@ -44,7 +45,9 @@ class Convert {
   @SuppressWarnings("deprecation")
   private static BitmapDescriptor toBitmapDescriptor(Object o) {
     final List<?> data = toList(o);
-    FlutterLoader loader = FlutterInjector.instance().flutterLoader();
+    FlutterLoader loader = new FlutterLoader();
+    loader.startInitialization(context);
+    loader.ensureInitializationComplete(context, null);
 
     switch (toString(data.get(0))) {
       case "defaultMarker":
