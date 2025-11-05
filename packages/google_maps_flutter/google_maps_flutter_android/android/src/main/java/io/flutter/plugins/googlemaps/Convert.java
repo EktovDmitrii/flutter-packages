@@ -32,9 +32,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import io.flutter.embedding.engine.FlutterEngine;
-import io.flutter.embedding.engine.loader.FlutterLoader;
-import io.flutter.embedding.engine.plugins.FlutterPlugin;
 
 /** Conversions between JSON-like values and GoogleMaps data types. */
 class Convert {
@@ -45,9 +42,6 @@ class Convert {
   @SuppressWarnings("deprecation")
   private static BitmapDescriptor toBitmapDescriptor(Object o) {
     final List<?> data = toList(o);
-    FlutterLoader loader = new FlutterLoader();
-    loader.startInitialization(context);
-    loader.ensureInitializationComplete(context, null);
 
     switch (toString(data.get(0))) {
       case "defaultMarker":
@@ -59,19 +53,17 @@ class Convert {
 
       case "fromAsset":
         if (data.size() == 2) {
-          return BitmapDescriptorFactory.fromAsset(
-                  loader.getLookupKeyForAsset(toString(data.get(1))));
+          String key = "flutter_assets/" + toString(data.get(1));
+          return BitmapDescriptorFactory.fromAsset(key);
         } else {
-          return BitmapDescriptorFactory.fromAsset(
-                  loader.getLookupKeyForAsset(
-                          toString(data.get(1)),
-                          toString(data.get(2))));
+          String key = "flutter_assets/" + toString(data.get(2)) + "/" + toString(data.get(1));
+          return BitmapDescriptorFactory.fromAsset(key);
         }
 
       case "fromAssetImage":
         if (data.size() == 3) {
-          return BitmapDescriptorFactory.fromAsset(
-                  loader.getLookupKeyForAsset(toString(data.get(1))));
+          String key = "flutter_assets/" + toString(data.get(1));
+          return BitmapDescriptorFactory.fromAsset(key);
         } else {
           throw new IllegalArgumentException(
                   "'fromAssetImage' Expected exactly 3 arguments, got: " + data.size());
